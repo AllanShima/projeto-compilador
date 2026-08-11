@@ -1,0 +1,21 @@
+// Definição de atalhos que simplifica e reaproveita o código
+
+macro RolarFrente = [Baixo + Frente]
+macro RolarTras = [Baixo + Tras]
+
+// Definição de Combos e Golpes (funções)
+
+combo Voadora() {
+    requer Cima + Frente + Chute Alto
+}
+
+main() {
+    Guilhotina(2)
+}
+
+// Lista de Combos a partir de um ataque (Objetos ou listas)
+
+combo "Iniciacao" = [RolarTras] -> {
+    [Jab] -> "Hadouken",
+    [SocoForte] -> "HadoukenForte"
+}
