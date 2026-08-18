@@ -1,15 +1,15 @@
-// Definição de atalhos que simplifica e reaproveita o código
+// Definicao de atalhos que simplifica e reaproveita o codigo
 
-macro RolarFrente = [Baixo + Frente]
-macro RolarTras = [Baixo + Tras]
+macro RolarFrente = [Baixo -> Frente]
+macro RolarTras = [Baixo -> Tras]
 
-// Definição de Combos e Golpes (funções)
+// Definicao de Combos e Golpes (funcoes)
 
 combo Voadora() {
-    requer Cima + Frente + Chute Alto
+    return Cima -> Frente -> Chute Alto
 }
 
-main() {
+arena() {
     Guilhotina(2)
 }
 
