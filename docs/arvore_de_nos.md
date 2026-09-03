@@ -45,10 +45,30 @@ isso demonstra que a análise puramente baseada na árvore reduzida não serve c
 ## 5. Dois Requisitos, Um de Cada Lado
 
 ### Requisito Resolvido pela Classe
-A validação de intervalos numéricos específicos que parecem exigir lógica aritmética complexa pode, muitas vezes, ser resolvida diretamente por meio de padrões regulares estruturados. Um exemplo prático na especificação de motores de jogo é a validação de quadros de animação ou frames de tolerância de input, que podem ser confinados a um escopo estrito através de expansão de classes e concatenações direcionadas, sem a necessidade de recorrer a estruturas de controle de fluxo externas ou contadores dinâmicos durante a fase de análise léxica.
+A validação de intervalos numéricos específicos que parecem exigir lógica aritmética complexa pode ser resolvida diretamente por padrões regulares estruturados. Um exemplo no nosso projeto é a **validação da janela de cancelamento de quadros de animação (frames de tolerância de 0 a 60)**. 
+## 5. Dois Requisitos, Um de Cada Lado
+
+### Requisito Resolvido pela Classe
+A validação de intervalos numéricos específicos que parecem exigir lógica aritmética complexa pode ser resolvida diretamente por padrões regulares estruturados. Um exemplo no nosso projeto é a **validação da janela de cancelamento de quadros de animação (frames de tolerância de 0 a 60)**. 
+
+Embora pareça exigir uma operação relacional ($frame \le 60$), o conjunto de valores é finito e resolvido inteiramente na fase léxica pela expressão regular:
+`([0-5]?[0-9]|60)`
+
+*(Onde a máquina de estados só precisa registrar em qual posição do caractere numérico está no momento, sem necessidade de memória extra).*
 
 ### Requisito Fora da Classe
-O reconhecimento de combos baseados na contagem estrita e ilimitada de um número variável de socos e chutes precedentes excede a capacidade de um autômato finito. Para que o sistema verifique se o número de comandos acumulados em uma sequência arbitrária atende a uma condição de igualdade dinâmica, a máquina precisaria dispor de uma memória com capacidade de crescimento ilimitado, característica incompatível com a estrutura de estados finitos descrita pelas expressões regulares e árvores de análise léxica tradicionais.
+A validação e reconhecimento de combos baseados no **pareamento e balanceamento estrito de cancelamentos encadeados de comandos (ex: número ilimitado de entradas de ataque seguidas do mesmo número de confirmações de bloqueio)** excede a capacidade de um autômato finito. 
+
+Para verificar essa condição, a máquina **precisaria armazenar um contador dinâmico ou utilizar uma pilha de memória** para guardar o número de entradas já lidas e comparar com as saídas. Como a profundidade da sequência de combo escrita pelo usuário não possui um limite máximo fixo (não tem teto pré-definido no texto), essa verificação não pode ser feita por expressões regulares, exigindo um analisador sintático com pilha (Linguagem Livre de Contexto).
+Embora pareça exigir uma operação relacional ($frame \le 60$), o conjunto de valores é finito e resolvido inteiramente na fase léxica pela expressão regular:
+`([0-5]?[0-9]|60)`
+
+*(Onde a máquina de estados só precisa registrar em qual posição do caractere numérico está no momento, sem necessidade de memória extra).*
+
+### Requisito Fora da Classe
+A validação e reconhecimento de combos baseados no **pareamento e balanceamento estrito de cancelamentos encadeados de comandos (ex: número ilimitado de entradas de ataque seguidas do mesmo número de confirmações de bloqueio)** excede a capacidade de um autômato finito. 
+
+Para verificar essa condição, a máquina **precisaria armazenar um contador dinâmico ou utilizar uma pilha de memória** para guardar o número de entradas já lidas e comparar com as saídas. Como a profundidade da sequência de combo escrita pelo usuário não possui um limite máximo fixo (não tem teto pré-definido no texto), essa verificação não pode ser feita por expressões regulares, exigindo um analisador sintático com pilha (Linguagem Livre de Contexto).
 
 ---
 
