@@ -7,21 +7,26 @@
 //    COMBO_ATIVADO: Hadouken (Dano: 120, Frames: 45)
 //
 // Explicacao:
-// A sequencia [Baixo, Frente, SocoForte] sai como "HadoukenForte" porque
-// casa com a macro RolarFrente seguida de SocoForte.
+// A sequencia [Baixo, Frente, SocoForte] casa com a macro RolarFrente 
+// seguida de SocoForte.
 //
 // Casos negativos na entrada:
 // A sequencia [Baixo, Tras, ChuteFraco] entra no casamento da macro RolarTras,
 // mas NAO produz saida porque nao ha nenhuma regra/branch definida para ChuteFraco
 // apos a RolarTras. O input e descartado por falha na tabela de acoes.
 
-macro RolarFrente = [Baixo -> Frente];
-macro RolarTras   = [Baixo -> Tras];
+macro RolarFrente = Baixo -> Frente;
+macro RolarTras = Baixo -> Tras;
+macro Parado = null;
 
-pattern Hadouken      = RolarFrente -> [Jab];
-pattern HadoukenForte = RolarFrente -> [SocoForte];
+pattern Mashing = ChuteFraco+;
+pattern Ataque = Parado? -> Jab;
+pattern Hadouken = RolarFrente -> Jab;
+pattern HadoukenForte = RolarFrente -> SocoForte;
 
 rule {
-    on Hadouken(h)      => emit("COMBO_ATIVADO", "Hadouken", 80);
+    on Mashing(m) => emit("COMBO_ATIVADO", "Mashing", 40);
+    on Ataque(a) => emit("COMBO_ATIVADO", "Ataque", 50);
+    on Hadouken(h) => emit("COMBO_ATIVADO", "Hadouken", 80);
     on HadoukenForte(h) => emit("COMBO_ATIVADO", "HadoukenForte", 120);
 }
