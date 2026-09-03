@@ -12,40 +12,40 @@
 
 ## 2. Cobertura Mínima
 
-A linguagem KomboScript utiliza operadores de repetição e opcionalidade em sua especificação de macros e combos. O operador de fecho positivo (`+`) é aplicado diretamente na construção de sequências repetidas de comandos, como demonstrado na regra `Mashing = ChuteFraco+;`, onde a repetição de um comando de forma arbitrária é obrigatória. 
+A KomboScript utiliza operadores de repetição e opcionalidade na especificação de macros e combos. O operador de fecho positivo (`+`) é aplicado na construção de sequências repetidas de comandos, como em `Mashing = ChuteFraco+;`. 
 
-Adicionalmente, a opcionalidade (`?`) encontra seu lugar natural na definição de modificadores de golpes que podem ou não ser incluídos pelo jogador em uma sequência de execução rápida, como em entradas de comandos em que um direcional intermediário pode ser omitido pelo jogador sem invalidar o reconhecimento do combo pelo motor.
+Além disso, a opcionalidade (`?`) é para a definição de modificadores de golpes que podem ou não ser incluídos pelo jogador em uma sequência, como em comandos que um direcional pode ser omitido pelo jogador sem invalidar o reconhecimento do combo.
 
 ---
 
 ## 3. Um Par que Converge
 
-Para verificar a consistência da redução ao núcleo, duas escritas diferentes que denotam o mesmo conjunto de caracteres devem resultar na mesma árvore e, consequentemente, na mesma contagem de nós e forma linear idêntica.
+Duas escritas diferentes que denotam o mesmo conjunto de caracteres devem resultar na mesma árvore e na mesma contagem de nós.
 
 * **Expressão A:** `[0-9]+`
 * **Expressão B:** `[0-9][0-9]*`
 
-Ambas as expressões descrevem sequências de dígitos numéricos com ocorrência de um ou mais elementos. Quando reduzidas ao núcleo utilizando estritamente a concatenação, alternância e o fecho, ambas produzem a forma linear equivalente correspondente a 40 nós na árvore reduzida, confirmando a consistência do processo de tradução.
+Ambas as expressões descrevem números que podem aparecer várias vezes. Quando reduzidas ao núcleo utilizando concatenação, alternância e fecho, elas produzem a forma linear, correspondendo a 40 nós na árvore reduzida.
 
 ---
 
 ## 4. Um Par que Não Concorre
 
-A comparação estrutural de árvores sintáticas reduzidas possui limitações inerentes à forma como os operadores são distribuídos, o que significa que expressões semanticamente equivalentes podem gerar estruturas de nós totalmente distintas.
+A comparação de árvores sintáticas reduzidas têm limitações de como os operadores são distribuídos, o que significa que expressões semanticamente equivalentes podem gerar estruturas de nós totalmente diferentes.
 
 * **Expressão A:** `(a|b)*`
 * **Expressão B:** `(a*b*)*`
 
-Ambas as expressões denotam exatamente o mesmo conjunto de cadeias formadas por combinações arbitrárias dos símbolos `a` e `b`. No entanto, a árvore gerada pela primeira expressão resulta em um fecho aplicado diretamente sobre uma alternância simples, enquanto a segunda gera um encadeamento aninhado de fechos sobre subcadeias independentes. 
+Ambas as expressões apresentam exatamente o mesmo conjunto de cadeias formadas por combinações dos símbolos `a` e `b`. Mas a árvore gerada pela primeira expressão mostra em um fecho aplicado diretamente em uma alternância simples, enquanto a segunda gera um encadeamento aninhado de fechos em subcadeias independentes. 
 
-isso demonstra que a análise puramente baseada na árvore reduzida não serve como um provador de equivalência de linguagens. O comparador estrutural apontará uma divergência de formas, uma vez que a igualdade detectada restringe-se estritamente à sintaxe imediata da redução, exigindo a construção formal de autômatos mínimos para validar a equivalência semântica completa.
+Isso demonstra que a análise baseada apenas na árvore reduzida não serve como um provador de equivalência de linguagens. O comparador estrutural mostrará uma divergência de formas, uma vez que a igualdade detectada se restringe estritamente à sintaxe imediata da redução, exigindo a construção de autômatos mínimos para verificar a equivalência semântica.
 
 ---
 
 ## 5. Dois Requisitos, Um de Cada Lado
 
 ### Requisito Resolvido pela Classe
-A validação de intervalos numéricos específicos que parecem exigir lógica aritmética complexa pode, muitas vezes, ser resolvida diretamente por meio de padrões regulares estruturados. Um exemplo prático na especificação de motores de jogo é a validação de quadros de animação ou frames de tolerância de input, que podem ser confinados a um escopo estrito através de expansão de classes e concatenações direcionadas, sem a necessidade de recorrer a estruturas de controle de fluxo externas ou contadores dinâmicos durante a fase de análise léxica.
+A validação de intervalos numéricos que parecem exigir lógica aritmética complexa pode, muitas vezes, ser resolvida diretamente por meio de padrões regulares estruturados. Um exemplo prático na especificação de motores de jogo é a validação de quadros de animação ou frames de tolerância de input, que podem ser confinados a um escopo estrito através de expansão de classes e concatenações direcionadas, sem a necessidade de recorrer a estruturas de controle de fluxo externas ou contadores dinâmicos durante a fase de análise léxica.
 
 ### Requisito Fora da Classe
 O reconhecimento de combos baseados na contagem estrita e ilimitada de um número variável de socos e chutes precedentes excede a capacidade de um autômato finito. Para que o sistema verifique se o número de comandos acumulados em uma sequência arbitrária atende a uma condição de igualdade dinâmica, a máquina precisaria dispor de uma memória com capacidade de crescimento ilimitado, característica incompatível com a estrutura de estados finitos descrita pelas expressões regulares e árvores de análise léxica tradicionais.
