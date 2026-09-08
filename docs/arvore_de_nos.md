@@ -1,3 +1,12 @@
+### TM6 - A (BCC)
+#### Integrantes:
+- Allan;
+- Hugo Araki
+- Guilherme Ryu
+- Renan;
+- Danillo;
+- Henrique
+---
 ## 1. Tabela de Peças
 
 | Nome da Peça     | Trecho Real da Especificação | Padrão com Açúcar | Padrão no Núcleo                                                          | Forma Linear da Árvore                                    | Nós  |
