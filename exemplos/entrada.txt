@@ -1,4 +1,16 @@
-Entrada do Controle - Round 1:
+Entrada 1: 
+ - Baixo, Frente, Jab => emit("Hadouken")
 
-1. [Baixo -> Tras -> ChuteFraco]
-2. [Baixo -> Frente -> SocoForte]
+ - Explicação: O desempate por casamento mais longo decide por Hadouken.
+   Sem ele, o sistema emitiria Ataque para toda entrada que deveria ativar Hadouken.
+
+Entrada 2
+ - Baixo, Tras, Jab => emit("Ataque")
+
+ - Explicação: Como nenhum combo referencia RolarTras, Hadouken nao casa.
+   Sobra Ataque, via Parado? vazio seguido de Jab.
+
+Entrada 3 
+ - Neutro, Jab => emit("Ataque")
+
+ - Explicação: O Neutro da entrada casa com o macro, e Jab fecha o combo.
