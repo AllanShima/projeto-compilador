@@ -6,38 +6,24 @@
 
 namespace {
 
-void demonstrarValida(const std::string& expressao) {
-    std::cout << "Expressao valida: " << expressao << '\n';
+void demonstrar(const std::string& expressao) {
+    std::cout << "Expressao: " << expressao << '\n';
+
     const komboscript::Resultado resultado = komboscript::analisarExpressao(expressao);
     if (!resultado.ok) {
-        std::cout << "  ERRO INESPERADO: "
-                   << komboscript::formatarErro(expressao, resultado.erro) << '\n';
+        std::cout << komboscript::formatarErro(expressao, resultado.erro) << '\n';
         return;
     }
+
     std::cout << "  arvore: " << komboscript::formatarArvore(resultado.arvore) << '\n';
     std::cout << "  nos:    " << komboscript::tamanho(resultado.arvore) << '\n';
 }
 
-void demonstrarMalformada(const std::string& expressao) {
-    std::cout << "Expressao malformada: " << expressao << '\n';
-    const komboscript::Resultado resultado = komboscript::analisarExpressao(expressao);
-    if (resultado.ok) {
-        std::cout << "  INESPERADO: a expressao foi aceita, e nao deveria ser.\n";
-        return;
-    }
-    std::cout << komboscript::formatarErro(expressao, resultado.erro) << '\n';
-}
-
-}  // namespace
+} // namespace
 
 int main() {
-    // Slide 3 — expressao real do combo Mashing.
-    demonstrarValida("ChuteFraco -> ChuteFraco+");
-
+    demonstrar("ChuteFraco -> ChuteFraco+");   // Slide 3
     std::cout << '\n';
-
-    // Slide 4 — grupo aberto que nunca fecha.
-    demonstrarMalformada("[Jab -> Frente");
-
+    demonstrar("[Jab -> Frente");              // Slide 4
     return 0;
 }
