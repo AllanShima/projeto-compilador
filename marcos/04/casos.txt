@@ -1,0 +1,51 @@
+# 04_combos_casos.txt — bateria de testes para a linguagem de combos de jogos de luta.
+#
+# Formato: expressao <TAB> cadeia <TAB> aceita|recusa
+# Onde os comandos individuais da cadeia podem ser simulados como inputs do jogador.
+#
+# A cadeia vazia é representada quando não há símbolos antes do segundo tabulador.
+
+# --- casos base (golpes isolados)
+Jab	Jab	aceita
+Jab		recusa
+Jab	SocoForte	recusa
+Jab	Jab	Jab	recusa
+
+# --- concatenacao (sequências diretas / links)
+Baixo Frente Jab	Baixo	Frente	Jab	aceita
+Baixo Frente Jab	Baixo	Frente	recusa
+Baixo Frente Jab	Baixo	Frente	Jab	SocoForte	recusa
+
+# --- alternancia (opções de golpes ou direções)
+Baixo|(Baixo Frente)	Baixo	aceita
+Baixo|(Baixo Frente)	Baixo	Frente	aceita
+Baixo|(Baixo Frente)	Frente	recusa
+
+# --- fecho: repetição de comandos (ex: tap de botões ou tiques de movimento)
+Jab*		aceita
+Jab*	Jab	aceita
+Jab*	Jab	Jab	Jab	aceita
+Jab*	SocoForte	recusa
+
+# --- fecho positivo (exigindo pelo menos um input do golpe)
+ChuteFraco+		recusa
+ChuteFraco+	ChuteFraco	aceita
+ChuteFraco+	ChuteFraco	ChuteFraco	ChuteFraco	aceita
+
+# --- opcional (movimento opcional antes do ataque)
+Baixo? Jab		aceita
+Baixo? Jab	Baixo	Jab	aceita
+Baixo? Jab	Frente	Jab	recusa
+
+# --- coringa: qualquer input de movimento válido no lugar
+Baixo * Jab	Baixo	Frente	Jab	aceita
+Baixo * Jab	Baixo	ChuteFraco	Jab	aceita
+Baixo * Jab	Baixo	Jab	recusa
+
+# --- grupo e composicao (ex: Hadouken ou movimentos complexos em cadeia)
+(Baixo Frente)*	Baixo	Frente	Baixo	Frente	aceita
+(Baixo Frente)*			aceita
+(Baixo Frente)*	Baixo	recusa
+(Baixo|Tras)*SocoForte	SocoForte	aceita
+(Baixo|Tras)*SocoForte	Baixo	Tras	Baixo	SocoForte	aceita
+(Baixo|Tras)*SocoForte	Baixo	Frente	SocoForte	recusa
