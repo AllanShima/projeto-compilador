@@ -1,51 +1,106 @@
-# 04_combos_casos.txt — bateria de testes para a linguagem de combos de jogos de luta.
+# casos.txt — vereditos conferidos a mao, sem rodar o programa.
 #
-# Formato: expressao <TAB> cadeia <TAB> aceita|recusa
-# Onde os comandos individuais da cadeia podem ser simulados como inputs do jogador.
-#
-# A cadeia vazia é representada quando não há símbolos antes do segundo tabulador.
+# Formato: expressao <TAB> inputs separados por espaco <TAB> aceita|recusa
+# Sequencia vazia = campo vazio (dois tabuladores seguidos).
+# Sintaxe: `->` concatena, `|` alterna, `*` `+` `?` repetem, `[ ]` agrupa.
+# Precedencia: `*` `+` `?` > `->` > `|`. Nao ha coringa.
 
-# --- casos base (golpes isolados)
+# --- casos base
 Jab	Jab	aceita
 Jab		recusa
 Jab	SocoForte	recusa
-Jab	Jab	Jab	recusa
+Jab	Jab Jab	recusa
 
-# --- concatenacao (sequências diretas / links)
-Baixo Frente Jab	Baixo	Frente	Jab	aceita
-Baixo Frente Jab	Baixo	Frente	recusa
-Baixo Frente Jab	Baixo	Frente	Jab	SocoForte	recusa
+# --- concatenacao
+Baixo -> Frente -> Jab	Baixo Frente Jab	aceita
+Baixo -> Frente -> Jab	Baixo Frente	recusa
+Baixo -> Frente -> Jab	Baixo Frente Jab SocoForte	recusa
+Baixo -> Frente -> Jab	Frente Baixo Jab	recusa
+Baixo -> Frente -> Jab	Baixo Frente Chute999	recusa
 
-# --- alternancia (opções de golpes ou direções)
-Baixo|(Baixo Frente)	Baixo	aceita
-Baixo|(Baixo Frente)	Baixo	Frente	aceita
-Baixo|(Baixo Frente)	Frente	recusa
+# --- alternancia
+Baixo | [Baixo -> Frente]	Baixo	aceita
+Baixo | [Baixo -> Frente]	Baixo Frente	aceita
+Baixo | [Baixo -> Frente]	Frente	recusa
+Jab | SocoForte | Chute	SocoForte	aceita
+Jab | SocoForte | Chute	Chute	aceita
+Jab | SocoForte | Chute	Jab SocoForte	recusa
 
-# --- fecho: repetição de comandos (ex: tap de botões ou tiques de movimento)
+# --- precedencia: Jab | (Baixo -> Frente)
+Jab | Baixo -> Frente	Jab	aceita
+Jab | Baixo -> Frente	Baixo Frente	aceita
+Jab | Baixo -> Frente	Jab Frente	recusa
+Jab | Baixo -> Frente	Baixo	recusa
+
+# --- fecho (aceita a sequencia vazia)
 Jab*		aceita
 Jab*	Jab	aceita
-Jab*	Jab	Jab	Jab	aceita
+Jab*	Jab Jab Jab	aceita
+Jab*	Jab Jab SocoForte	recusa
 Jab*	SocoForte	recusa
 
-# --- fecho positivo (exigindo pelo menos um input do golpe)
+# --- fecho de fecho (ciclo de transicoes vazias)
+Jab**		aceita
+Jab**	Jab Jab Jab	aceita
+Jab**	SocoForte	recusa
+[Jab?]*		aceita
+[Jab?]*	Jab Jab	aceita
+[Jab?]*	Jab Frente	recusa
+
+# --- fecho positivo
 ChuteFraco+		recusa
 ChuteFraco+	ChuteFraco	aceita
-ChuteFraco+	ChuteFraco	ChuteFraco	ChuteFraco	aceita
+ChuteFraco+	ChuteFraco ChuteFraco ChuteFraco	aceita
 
-# --- opcional (movimento opcional antes do ataque)
-Baixo? Jab		aceita
-Baixo? Jab	Baixo	Jab	aceita
-Baixo? Jab	Frente	Jab	recusa
+# --- Mashing: ao menos duas repeticoes
+ChuteFraco -> ChuteFraco+	ChuteFraco	recusa
+ChuteFraco -> ChuteFraco+	ChuteFraco ChuteFraco	aceita
+ChuteFraco -> ChuteFraco+	ChuteFraco ChuteFraco ChuteFraco	aceita
+ChuteFraco -> ChuteFraco -> ChuteFraco*	ChuteFraco	recusa
+ChuteFraco -> ChuteFraco -> ChuteFraco*	ChuteFraco ChuteFraco	aceita
+ChuteFraco -> ChuteFraco -> ChuteFraco*	ChuteFraco ChuteFraco ChuteFraco	aceita
 
-# --- coringa: qualquer input de movimento válido no lugar
-Baixo * Jab	Baixo	Frente	Jab	aceita
-Baixo * Jab	Baixo	ChuteFraco	Jab	aceita
-Baixo * Jab	Baixo	Jab	recusa
+# --- Rajada
+ChuteFraco+ -> ChuteForte	ChuteFraco ChuteFraco ChuteForte	aceita
+ChuteFraco+ -> ChuteForte	ChuteForte	recusa
+ChuteFraco+ -> ChuteForte	ChuteFraco ChuteFraco	recusa
 
-# --- grupo e composicao (ex: Hadouken ou movimentos complexos em cadeia)
-(Baixo Frente)*	Baixo	Frente	Baixo	Frente	aceita
-(Baixo Frente)*			aceita
-(Baixo Frente)*	Baixo	recusa
-(Baixo|Tras)*SocoForte	SocoForte	aceita
-(Baixo|Tras)*SocoForte	Baixo	Tras	Baixo	SocoForte	aceita
-(Baixo|Tras)*SocoForte	Baixo	Frente	SocoForte	recusa
+# --- opcional
+Baixo?		aceita
+Baixo?	Baixo	aceita
+Baixo?	Baixo Baixo	recusa
+Baixo? -> Jab	Jab	aceita
+Baixo? -> Jab	Baixo Jab	aceita
+Baixo? -> Jab	Frente Jab	recusa
+Baixo? -> Jab	Baixo	recusa
+Baixo? -> Jab		recusa
+
+# --- Ataque (Neutro opcional antes do Jab)
+Neutro? -> Jab	Neutro Jab	aceita
+Neutro? -> Jab	Jab	aceita
+Neutro? -> Jab	Neutro Neutro Jab	recusa
+
+# --- alternancia no lugar de coringa
+Baixo -> [Frente | Tras | Cima] -> Jab	Baixo Frente Jab	aceita
+Baixo -> [Frente | Tras | Cima] -> Jab	Baixo Tras Jab	aceita
+Baixo -> [Frente | Tras | Cima] -> Jab	Baixo Jab	recusa
+Baixo -> [Frente | Tras | Cima] -> Jab	Baixo ChuteFraco Jab	recusa
+
+# --- grupo e composicao
+[Baixo -> Frente]*		aceita
+[Baixo -> Frente]*	Baixo Frente Baixo Frente	aceita
+[Baixo -> Frente]*	Baixo	recusa
+[Baixo -> Frente]*	Baixo Frente Baixo	recusa
+[Baixo | Tras]* -> SocoForte	SocoForte	aceita
+[Baixo | Tras]* -> SocoForte	Baixo Tras Baixo SocoForte	aceita
+[Baixo | Tras]* -> SocoForte	Baixo Frente SocoForte	recusa
+[Baixo | Tras]* -> SocoForte	Baixo Tras	recusa
+
+# --- Hadouken e HadoukenForte
+Baixo -> Frente -> Jab | Baixo -> Frente -> SocoForte	Baixo Frente Jab	aceita
+Baixo -> Frente -> Jab | Baixo -> Frente -> SocoForte	Baixo Frente SocoForte	aceita
+Baixo -> Frente -> Jab | Baixo -> Frente -> SocoForte	Baixo Frente Chute	recusa
+Baixo -> Frente -> Jab | Baixo -> Frente -> SocoForte	Baixo Tras Jab	recusa
+Baixo+ -> Frente -> Jab	Baixo Frente Jab	aceita
+Baixo+ -> Frente -> Jab	Baixo Baixo Frente Jab	aceita
+Baixo+ -> Frente -> Jab	Frente Jab	recusa

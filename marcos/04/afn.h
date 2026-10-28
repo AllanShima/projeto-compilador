@@ -1,3 +1,5 @@
+// AFN do KomboScript, construção de Thompson e bateria de testes.
+
 #ifndef KOMBOSCRIPT_KOMBO_AFN_H
 #define KOMBOSCRIPT_KOMBO_AFN_H
 
@@ -5,14 +7,15 @@
 #include <string>
 #include <vector>
 
-#include "afd.h" // Inclui o AFD do seu projeto que define Estado e Simbolo
+#include "afd.h"
+#include "expressao.h"  // Arvore
 
 namespace komboscript {
 
-// Rótulo da transição vazia para sequências de combos, representado por string vazia.
+// Transição vazia (não consome input).
 inline const Simbolo kEpsilon = "";
 
-// Rótulo de coringa para combos (caso queiram aceitar qualquer input válido naquele frame).
+// Reservado para coringa. A linguagem não tem coringa; a construção nunca o usa.
 inline const Simbolo kQualquer = "*";
 
 struct TransicaoAfn {
@@ -20,14 +23,13 @@ struct TransicaoAfn {
     Estado destino = 0;
 };
 
-// Um bloco de máquina com uma entrada e uma saída — o invariante da construção de Thompson.
+// Bloco com uma entrada e uma saída.
 struct Bloco {
     Estado entrada = 0;
     Estado saida = 0;
 };
 
-// Um passo do traço da simulação do AFN de combos: estados ativos antes de iniciar
-// ou logo após ler um símbolo/input do jogador.
+// Estados ativos antes do primeiro input (simboloLido == kEpsilon) ou após um input.
 struct PassoDaSimulacaoAfn {
     Simbolo simboloLido;
     std::vector<Estado> ativos;
@@ -54,17 +56,14 @@ public:
     std::size_t quantidadeDeTransicoes() const;
     std::size_t quantidadeDeTransicoesVazias() const;
 
-    // O fecho vazio de um conjunto: estados alcançáveis sem consumir inputs.
+    // Estados alcançáveis sem consumir input.
     std::vector<Estado> fechoVazio(const std::vector<Estado>& conjunto) const;
 
     bool aceita(const std::vector<Simbolo>& sequencia) const;
     SimulacaoAfn simular(const std::vector<Simbolo>& sequencia) const;
 
-    std::string formatarSimulacao(const std::vector<Simbolo>& sequencia, const SimulacaoAfn& simulacao) const;
-
-    // Opcional: converte este AFN resultante de Thompson em um AfdCombo definitivo
-    // utilizando o Algoritmo de Construção por Subconjuntos.
-    // AfdCombo paraAfd() const;
+    std::string formatarSimulacao(const std::vector<Simbolo>& sequencia,
+                                  const SimulacaoAfn& simulacao) const;
 
 private:
     std::vector<Simbolo> alfabeto_;
@@ -72,6 +71,31 @@ private:
     Estado inicial_ = 0;
     Estado aceitacao_ = 0;
 };
+
+// Tarefa 1: árvore -> AFN.
+AfnCombo construirThompson(const Arvore& arvore);
+
+// Tarefa 3: bateria de casos.
+struct CasoDeTeste {
+    std::string expressao;
+    std::vector<Simbolo> sequencia;
+    bool esperado = false;
+    std::string origem;         // arquivo:linha
+    std::string erroDeFormato;  // preenchido se a linha for inválida
+};
+
+struct ResultadoDaBateria {
+    std::size_t total = 0;
+    std::size_t passaram = 0;
+    std::vector<std::string> falhas;
+};
+
+// Formato da linha: expressao <TAB> inputs separados por espaço <TAB> aceita|recusa
+// Devolve lista vazia se o arquivo não abre.
+std::vector<CasoDeTeste> lerCasos(const std::string& caminho);
+
+// Roda todos os casos, sem parar na primeira falha.
+ResultadoDaBateria rodarBateria(const std::vector<CasoDeTeste>& casos);
 
 }  // namespace komboscript
 
