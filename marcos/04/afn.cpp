@@ -1,5 +1,6 @@
 #include "afn.h"
 
+#include <algorithm>
 #include <fstream>
 #include <sstream>
 #include <utility>
@@ -78,6 +79,43 @@ std::vector<Estado> AfnCombo::fechoVazio(const std::vector<Estado>& conjunto) co
         }
     }
     return resultado;
+}
+
+std::vector<Estado> AfnCombo::mover(const std::vector<Estado>& conjunto, const Simbolo& simbolo) const {
+    std::vector<Estado> alcancados;
+    for (const Estado estado : conjunto) {
+        if (estado >= transicoes_.size()) {
+            continue;
+        }
+        for (const TransicaoAfn& transicao : transicoes_[estado]) {
+            if (transicao.simbolo == kEpsilon) {
+                continue;
+            }
+            if (transicao.simbolo == simbolo || (transicao.simbolo == kQualquer && simbolo != kEpsilon)) {
+                alcancados.push_back(transicao.destino);
+            }
+        }
+    }
+    std::sort(alcancados.begin(), alcancados.end());
+    alcancados.erase(std::unique(alcancados.begin(), alcancados.end()), alcancados.end());
+    return alcancados;
+}
+
+Estado AfnCombo::estadoInicial() const { return inicial_; }
+Estado AfnCombo::estadoDeAceitacao() const { return aceitacao_; }
+
+std::vector<Simbolo> AfnCombo::simbolosUsados() const {
+    std::vector<Simbolo> simbolos;
+    for (const std::vector<TransicaoAfn>& saidas : transicoes_) {
+        for (const TransicaoAfn& transicao : saidas) {
+            if (transicao.simbolo != kEpsilon && transicao.simbolo != kQualquer) {
+                simbolos.push_back(transicao.simbolo);
+            }
+        }
+    }
+    std::sort(simbolos.begin(), simbolos.end());
+    simbolos.erase(std::unique(simbolos.begin(), simbolos.end()), simbolos.end());
+    return simbolos;
 }
 
 // Tarefa 2: mantém o conjunto de estados ativos. Aceita se o estado de
