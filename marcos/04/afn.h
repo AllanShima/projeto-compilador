@@ -59,6 +59,18 @@ public:
     // Estados alcançáveis sem consumir input.
     std::vector<Estado> fechoVazio(const std::vector<Estado>& conjunto) const;
 
+    // Estados alcançados lendo `simbolo` a partir de qualquer estado do
+    // conjunto, SEM fecho vazio (quem chama aplica o fecho). Ordenado e sem
+    // repetição. Uma transição `kQualquer` casa com qualquer símbolo.
+    std::vector<Estado> mover(const std::vector<Estado>& conjunto, const Simbolo& simbolo) const;
+
+    Estado estadoInicial() const;
+    Estado estadoDeAceitacao() const;
+
+    // Símbolos que rotulam alguma transição (sem a transição vazia e sem
+    // `kQualquer`), ordenados. É o alfabeto mínimo para determinizar.
+    std::vector<Simbolo> simbolosUsados() const;
+
     bool aceita(const std::vector<Simbolo>& sequencia) const;
     SimulacaoAfn simular(const std::vector<Simbolo>& sequencia) const;
 
